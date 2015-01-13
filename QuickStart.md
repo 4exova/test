@@ -43,13 +43,13 @@
 
 ## Пошаговая инструкция по созданию проекта
 
-1.  [Создайте страницу](#page_creation)
-    1.1 [Опишите страницу в BEMJSON-файле](#BEMJSON_declaration)
+1.  [Создайте страницу](#page_creation)  
+   1.1 [Опишите страницу в BEMJSON-файле](#BEMJSON_declaration)
 2.  [Создайте блок](#block_creation)
-3.  [Реализуйте блок hello](#block_hello_modification)
-    3.1 [В технологии JavaScript](#JS_modification)
-    3.2 [В технологии BEMHTML](#BEMHTML_modification)
-    3.3 [В технологии CSS](#CSS_modification)
+3.  [Реализуйте блок hello](#block_hello_modification)  
+   3.1 [В технологии JavaScript](#JS_modification)  
+   3.2 [В технологии BEMHTML](#BEMHTML_modification)  
+   3.3 [В технологии CSS](#CSS_modification)
 
 <a name="page_creation"></a>
 
