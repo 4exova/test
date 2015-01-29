@@ -1,264 +1,269 @@
-# Как создать динамическую страницу с БЭМ
+## Быстрый старт по созданию статической страницы с БЭМ
 
-В этой статье мы рассмотрим пример реализации динамической функциональности страницы по [БЭМ-методологии](http://ru.bem.info/method/).
+В этой статье рассмотрен пример реализации статической страницы по [БЭМ-методологии](https://ru.bem.info/method/).
 
-# Что должно получиться
+## Что должно получиться
 
-Итогом проделанной работы будет страница с приветствием пользователя. Страница будет состоять из поля ввода, кнопки и приветствия. После того, как пользователь введет имя в поле и нажмет кнопку, его имя автоматически подставится в приветствие.
+Страница приветствия пользователя, содержащая поле ввода, кнопку и текст. При нажатии на кнопку страница обновляется и текст дополняется значением, введенным в поле.
 
-# Установка
+![страница приветствия](https://img-fotki.yandex.ru/get/15561/289488726.0/0_21856b_45166628_orig)
 
-**Требования к установке**
+## С чего начать
 
-Для начала работы с любым БЭМ-проектом нужен [Node.js](http://nodejs.org).
+### Минимальные требования
 
-Устанавливаем свой собственный БЭМ-проект. В этом нам поможет [шаблонный репозиторий](https://github.com/bem/project-stub), который содержит необходимый минимум конфигурационных файлов и папок. Делаем локальную копию `project-stub`.
+Установленная платформа [Node.js 0.10](http://nodejs.org).
 
-    git clone https://github.com/bem/project-stub.git start-project  
-    cd start-project      
-    npm install  
+### Локальная копия и настройка окружения
 
-Собираем проект с помощью [ENB](http://enb-make.info/):
+Для быстрого и простого создания БЭМ-проекта потребуется [шаблонный репозиторий](https://github.com/bem/project-stub), содержащий необходимый минимум конфигурационных файлов и папок.
 
-    node_modules/.bin/enb make
+1.  Сделайте локальную копию `project-stub`.
 
-Запускаем сервер:
+    **NB** В данном документе описана процедура установки для ревизии [13ae0e18ef8f48bc552b4944f7e5971c5b5f4768](https://github.com/bem/project-stub/commit/13ae0e18ef8f48bc552b4944f7e5971c5b5f4768). Процесс установки последующих версий может отличаться.
 
-    node_modules/.bin/enb server
+    ```bash
+    git clone https://github.com/bem/project-stub.git start-project
+    cd start-project
+    git checkout 13ae0e18ef8f48bc552b4944f7e5971c5b5f4768
+    npm install
+    ```
 
-При изменении конфигурации проекта нужно перезапускать сервер. Текущий процесс прерывается (`Ctrl+C`) и снова возобновляется командой запуска.  
+2.  Запустите сервер с помощью [ENB](https://ru.bem.info/tools/bem/enb-bem-techs/):
 
-Открываем браузер, чтобы проверить запустился ли сервер на компьютере: 
+    ```bash
+    npm start
+    ```
 
-    http://localhost:8080/desktop.bundles/index/index.html
+3.  Проверьте результат по ссылке [http://localhost:8080/desktop.bundles/index/index.html](http://localhost:8080/desktop.bundles/index/index.html).
 
-По умолчанию эта страница содержит примеры блоков библиотеки `bem-components`.
+    Должна открыться страница с примерами блоков библиотеки:
 
-Альтернативный вариант для сборки проекта –– [bem-tools](http://ru.bem.info/tools/bem/bem-tools/). Результаты сборки в обоих случаях одинаковы. 
+    ![главная страница](https://img-fotki.yandex.ru/get/15493/289488726.0/0_218be7_cbbd5b69_orig)
 
-Про сборку проекта при помощи `bem-tools` вы можете почитать, пройдя по это ссылке http://ru.bem.info/tools/bem/bem-tools/commands/#bem-make.
+## Пошаговая инструкция по созданию проекта
 
-# Пошаговая инструкция по созданию проекта
+Процедура разработки страницы приветствия состоит из следующих этапов:
 
-Этот раздел содержит пошаговую информацию по созданию динамической страницы.
+1.  [Создание страницы](#page-creation) <br>
+   1.1 [Описание страницы в BEMJSON-файле](#BEMJSON-declaration)
+2.  [Создание блока](#block-creation)
+3.  [Реализация блока hello](#block-hello-modification) <br>
+   3.1 [В технологии JavaScript](#JS-modification) <br>
+   3.2 [В технологии BEMHTML](#BEMHTML-modification) <br>
+   3.3 [В технологии CSS](#CSS-modification)
 
-* [Создание страницы](#page_creation) –– рассмотрим варианты создания страницы.  
-** [Описание страницы в BEMJSON-файле](#BEMJSON_declaration) –– опишем страницу в БЭМ-терминах.
-* [Создание блока](#block_creation) –– самостоятельно создадим блок.  
-** [Создание блока с файлом определенной технологии](#block_using_concrete_tech) –– рассмотрим возможность создавать файлы блока конкретных технологий. 
-* [Переопределение блока `hello`](#block_hello_modification) –– внесем необходимые изменения в файлы технологий блока.  
-** [Реализация блока в технологии JS](#JS_modification) –– реализуем блок в технологии JavaScript.  
-** [Реализация блока в технологии BEMHTML](#BEMHTML_modification) –– реализуем блок в технологии BEMHTML.  
-** [Реализация блока в технологии CSS](#CSS_modification) –– реализуем блок в технологии CSS.
-* [Сборка проекта](#build) –– запустим сборку проекта.
+После выполнения всех шагов можно смотреть [результат](#result).
 
-<a name="page_creation"></a>
+<a name="page-creation"></a>
 
-## Создание страницы
+### 1.  Создание страницы
 
-Макеты страниц размещаются в каталоге `desktop.bundles`. Данный каталог содержит одну директорию –– `index`. Вы можете продолжать работу с этой директорией. Для этого необходимо заменить декларацию файла `index.bemjson.js`. Пример описания BEMJSON-файла мы рассмотрим ниже.  
+Исходники страниц размещаются в каталоге `start-project/desktop.bundles`. Изначально в проекте присутствует главная страница `index` с примерами блоков библиотеки [bem-components](https://ru.bem.info/libs/bem-components/).
 
-Альтернативный вариант –– создание новой страницы, используя команду [bem-tools](http://ru.bem.info/tools/bem/bem-tools/):
+Для начала работы с собственным проектом создайте новую страницу. Разместите в `desktop.bundles` каталог с именем `hello` и добавьте в него файл `hello.bemjson.js`.
 
-    bem create -l desktop.bundles -b hello
 
-* `-l desktop.bundles` –– указывает на уровень переопределения `desktop.bundles`;  
-* `-b hello` –– определяет имя блока страницы, в нашем случае `hello`.
+<a name="BEMJSON-declaration"></a>
 
-Выбирайте удобный для вас вариант. Дальше мы продолжим создание проекта на основе страницы `hello`.
+#### 1.1 Описание страницы в BEMJSON-файле
 
-<a name="BEMJSON_declaration"></a>
+[BEMJSON-файл](https://ru.bem.info/technology/bemjson/) – это структура страницы, описанная в терминах блоков, элементов и модификаторов.
 
-### Описание страницы в BEMJSON-файле
+1. Добавьте на своем проекте описание блока `hello` в файле `desktop.bundles/hello/hello.bemjson.js`. <br>
+   Блок **hello** – это сущность, которая содержит в себе все необходимые для проекта элементы.
 
-#### Создаем свой блок
+    ```js
+    {
+        block: 'page',
+        title: 'hello',
+        head: [
+            { elem: 'css', url: '_hello.css' }
+        ],
+        scripts: [{ elem: 'js', url: '_hello.js' }],
+        mods: { theme: 'islands' }
+        content: [
+            {
+                block: 'hello'
+            }
+         ]
+    }
+    ```
 
-Первым делом нам нужно добавить на страницу блок приветствия. Для того, чтобы разместить его на странице, добавим блок **hello** в файл `desktop.bundles/hello/hello.bemjson.js`.
+2. Поместите элемент `greeting` с текстом приветствия пользователя (поле **content**) в блок **hello**.
 
-{ block: 'hello' }
-
-Дальше внутрь блока **hello** поместим элемент **greeting** с приветствием пользователя:
-
-```
-{
-  elem: 'greeting',
-  content: 'Привет, %пользователь%!'
-}
-```
-
-#### Используем готовые блоки
-
-Кроме приветствия на странице должно быть поле ввода и кнопка. Блоки **input** и **button** мы берем готовые из библиотеки [bem-components](http://ru.bem.info/libs/bem-components/v2/). И вкладываем их в элемент **greeting**. 
-
-```
-{
-  elem: 'greeting',
-  content: 'Привет, %пользователь%!'
-  }, 
-  {
-      block: 'input',
-      mods: {theme: 'islands', size: 'm'},
-      placeholder: 'Имя пользователя'
-      }, 
-      {
-      block : 'button',
-      text : 'Нажать',
-      mods : { theme : 'islands', size : 'm' }
-  }
-}  
-```
-
-Если вы хотите внести какие-либо изменения в готовые блоки, это можно сделать на своем уровне переопределения. Подробнее об этом можно почитать, пройдя по ссылке http://ru.bem.info/tools/bem/bem-tools/levels/.
-
-Все необходимые блоки добавлены. Так будет выглядеть полный код страницы `desktop.bundles/hello/hello.bemjson.js`:
-
-```
-({
-    block: 'page',
-    title: 'hello',
-    head: [
-        { elem: 'css', url: '_hello.css' }
-    ],
-    scripts: [{ elem: 'js', url: '_hello.js' }],
+    ```js
     content: [
-       {
-           block: 'content',
-           content: [
-               {
-                   block: 'hello',
-                   name: 'BEMHTML',
-                   content: [
-                       {
-                           elem: 'greeting',
-                           content: 'Привет, %пользователь%!'
-                       }, {
-                               block: 'input',
-                               mods: {theme: 'islands', size: 'm'},
-                               placeholder: 'Имя пользователя'
-                       }, {
-	                           block : 'button',
-	                           text : 'Нажать',
-	                           mods : { theme : 'islands', size : 'm' }
-                       }
-                 ]
-               }
-           ]
-       }
+        {
+            block: 'hello',
+            content: [
+                {
+                    elem: 'greeting',
+                    content: 'Привет, %пользователь%!'
+                }
+            ]
+        }
     ]
-})
-```
+    ```
 
-Чтобы проверить запустился ли файл, откройте браузер по адресу:
+3. Чтобы создать поле ввода и кнопку, возьмите готовые реализации блоков `input` и `button` из библиотеки `bem-components` и добавьте их в элемент `greeting`.
 
-    http://localhost:8080/desktop.bundles/hello/hello.html
+    ```js
+    content: [
+        {
+            block: 'hello',
+            content: [
+                {
+                    elem: 'greeting',
+                    content: 'Привет, %пользователь%!'
+                },
+                {
+                        block: 'input',
+                        mods: { theme: 'islands', size: 'm' },
+                        name: 'name',
+                        placeholder: 'Имя пользователя'
+                },
+                {
+                        block : 'button',
+                        mods : { theme : 'islands', size : 'm', type : 'submit' },
+                        text : 'Нажать'
+                }
+            ]
+        }
+    ]
+    ```
 
-<a name="block_creation"></a>
+[Полный код](https://gist.github.com/4exova/1c2bdb1c2a2dbb2cb649) BEMJSON-файла.
 
-## Создание блока
+Чтобы убедиться, что страница отображает все необходимые объекты, откройте [http://localhost:8080/desktop.bundles/hello/hello.html](http://localhost:8080/desktop.bundles/hello/hello.html).
 
-На уровне `desktop.blocks` создаем директорию блока **hello**. По умолчанию блок будет представлен набором файлов для всех технологий реализации (`CSS/STYL`, `JS`, `BEMHTML`).
+Если вы хотите внести какие-либо изменения в существующие блоки, это можно сделать на своем [уровне переопределения](https://ru.bem.info/tools/bem/bem-tools/levels/).
 
-    bem create -l desktop.blocks -b hello 
+<a name="block-creation"></a>
 
-* `-l desktop.blocks` –– указывает на уровень переопределения `desktop.blocks`;  
-* `-b hello` –– задает имя директории блока, в нашем случае `hello`.     
+### 2. Создание блока
 
-Другой способ –– создание блока вручную. Для этого на уровне `desktop.blocks` создадим папку **hello** и разместим в ней необходимые для проекта файлы технологий реализации блока.     
+Чтобы элементы на странице работали должным образом, необходимо прописать дополнительную функциональность блока `hello` на своем уровне переопределения.
 
-<a name="block_using_concrete_tech"></a>
+1.  Создайте вручную каталог блока `hello` на уровне `desktop.blocks`.
+2.  Разместите в нем необходимые для проекта [файлы технологий реализации блока](https://ru.bem.info/method/filesystem/) (`CSS`, `JS`, `BEMHTML`). Название каталога блока и вложенных в него файлов должны совпадать с именем блока, которое прописано в BEMJSON-файле.
 
-### Создание блока с файлом определенной технологии
+    *   `hello.js` – описывает динамическую функциональность страниц;
+    *   `hello.bemhtml` – шаблоны для генерации HTML-представления блока;
+    *   `hello.css` – изменяет внешний вид объектов на странице.
 
-Блок можно создавать с файлом определенной технологии. Более подробную информацию об этом можно найти в командах [bem-tools](http://ru.bem.info/tools/bem/bem-tools/commands/#Создание-блока-в-определённой-технологии).
+<a name="block-hello-modification"></a>
 
-<a name="block_hello_modification"></a>
+### 3. Реализация блока `hello`
 
-## Переопределение блока `hello`
-Чтобы наш проект заработал должным образом, нужно переопределить файлы технологий реализации. 
+Для представления блока в терминах БЭМ необходимо реализовать его в следующих технологиях.
 
-<a name="JS_modification"></a>
+<a name="JS-modification"></a>
 
-### Реализация блока в технологии JS
+#### 3.1 Реализация блока в технологии JavaScript
 
-В файле `desktop.blocks/hello/hello.js` описываем реакцию блока на выполнение действия, в нашем случае нажатие кнопки, с помощью специального свойства `onSetMode`. При нажатии кнопки в приветствие будет автоматически подставляться имя пользователя, введенное в поле **input**. 
+1. Опишите в файле `desktop.blocks/hello/hello.js` реакцию блока на действие пользователя с помощью специального свойства `onSetMod`. При нажатии кнопки в текст приветствия будет подставляться имя пользователя, введенное в поле input. <br>
+   JavaScript-код написан с использованием декларативного JavaScript-фреймворка – [i-bem.js](https://ru.bem.info/technology/i-bem/).
 
-```
-onSetMod: {
-    'js': {
-        'inited': function() {
-            this._input = this.findBlockInside('input');
-            this._button = this.findBlockInside('button');
+    ```js
+    onSetMod: {
+        'js': {
+            'inited': function() {
+                this._input = this.findBlockInside('input');
 
-            this._button.on('click', function() {
-                  this.elem('greeting').text('Hello, ' + this._input.getVal() + '!');
-            }, this);
+                this.bindTo('submit', function(e) {
+                    e.preventDefault();
+                    this.elem('greeting').text('Привет, ' + this._input.getVal() + '!');
+                });
+            }
         }
     }
-}
 
-```
-Данный JavaScript заворачиваем в [модульную систему YModules](http://ru.bem.info/tools/bem/modules/):
+    ```
 
-```
-modules.define(
-    'hello',
-    ['i-bem__dom'],
-    function(provide, BEMDOM) {
-        provide(BEMDOM.decl('hello', {
-            onSetMod: {
-                'js': {
-                    'inited': function() {
-                        this._input = this.findBlockInside('input');
-                        this._button = this.findBlockInside('button');
+2. Используйте модульную систему [YModules](https://ru.bem.info/tools/bem/modules/), чтобы представить данный JavaScript-код:
 
-                        this._button.on('click', function() {
-                            this.elem('greeting').text('Hello, ' + this._input.getVal() + '!');
-                        }, this);
+    ```js
+    modules.define(
+        'hello', // имя блока
+        ['i-bem__dom'], // подключение зависимости
+        function(provide, BEMDOM) { // функция, в которую передаются имена используемых модулей
+            provide(BEMDOM.decl('hello', { // декларация блока
+                onSetMod: { // конструктор для описания реакции на события
+                    'js': {
+                        'inited': function() {
+                            this._input = this.findBlockInside('input');
+
+                            this.bindTo('submit', function(e) { // событие, на которое будет реакция
+                                e.preventDefault(); // предотвращение срабатывания события по умолчанию (отправка данных формы на сервер с перезагрузкой страницы)
+                                this.elem('greeting').text('Привет, ' + this._input.getVal() + '!');
+                            });
+                        }
                     }
                 }
-            }
-        }));
-    });
+            }));
+        });
+    ```
+
+<a name="BEMHTML-modification"></a>
+
+#### 3.2 Реализация блока в технологии BEMHTML
+
+[BEMHTML](https://ru.bem.info/technology/bemhtml/current/rationale/) – технология, которая преобразует входные данные из BEMJSON-файла в HTML.
+
+1. Напишите [BEMHTML-шаблон](https://ru.bem.info/technology/bemhtml/current/reference/) и укажите в нем, что блок `hello` имеет JavaScript-реализацию.
+2. Оберните блок `hello` в форму, добавив моду `tag`.
+
+```js
+block('hello')(
+    js()(true),
+    tag()('form')
+);
 ```
 
-<a name="BEMHTML_modification"></a>
+<a name="CSS-modification"></a>
 
-### Реализация блока в технологии BEMHTML
+#### 3.3 Реализация блока в технологии CSS
 
-Для того, чтобы наш JavaScript применился пишем BEMHTML-шаблон, в котором указываем, что наш блок **hello** имеет JavaScript-реализацию:
+Для блока `hello` создайте свои CSS-правила. Например, такие:
 
-```
-block hello, js: true
-```
-
-<a name="CSS_modification"></a>
-
-### Реализация блока в технологии CSS
-
-Для блока **hello** создаем свои CSS-правила. К примеру, такие:
-
-```
+```js
 .hello
-    color: green
+{
+    color: green;
+    padding: 10%;
+}
+
+.hello__greeting
+{
+    margin-bottom: 12px;
+}
+
+.hello__input
+{
+    margin-right: 12px;
+}
 ```
-<a name="build"></a>
 
-## Сборка проекта
+Для добавления к элементу `input` CSS правил, уже реализованных в блоке `hello`, подмешайте элемент с помощью поля `mix` во входных данных (BEMJSON).
 
-При обновлении страницы сервер пересобирал только ту часть проекта, которую затронули наши изменения. Для сборки всего проекта целиком воспользуемся командой `ENB`:
+```js
+{
+    block: 'input',
+    mods: { theme: 'islands', size: 'm' },
+    mix: { block: 'hello', elem: 'input' }, // подмешиваем элемент для добавления CSS-правил
+    name: 'name',
+    placeholder: 'Имя пользователя'
+}
+```
+[Полный код](https://gist.github.com/4exova/981a36cedceffa472742) BEMJSON-файла.
 
-    $ node_modules/.bin/enb make
+<a name="result"></a>
 
-# Результат
+## Результат
 
-Обновляем страницу в браузере с адресом 
+Чтобы увидеть итог проделанной работы, обновите страницу:
 
     http://localhost:8080/desktop.bundles/hello/hello.html
 
-и видим страницу приветствия:
-
-*скрин*
-
-Заполняем поле ввода любым именем, например, Вася, нажимаем кнопку и получаем результат:
-
-*скрин*
+Поскольку проект состоял всего из одной страницы, то необходимость в полной сборке отсутствует. О том, как написать более сложный проект, читайте в статье [Создаем свой проект на БЭМ](https://ru.bem.info/tutorials/start-with-project-stub/).
