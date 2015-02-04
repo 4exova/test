@@ -1,26 +1,26 @@
 ## Quick start for static page creation with BEM
 
-This article describes implementation example of static page using [BEM methodology](https://en.bem.info/method/).
+The article describes step-by-step implementation of a static page using [BEM methodology](https://bem.info/method/).
 
 ## Expected outcome
 
-User greeting page, that contains an input field, a button and a text. The page refreshes after button clicking and text is filled up with the value entered in the input field.
+A page that contains an input field, a button, and a greeting text. A value from the input field will be added to the greeting text when the user clicks the button.
 
-![greeting page](https://img-fotki.yandex.ru/get/16156/289488726.0/0_21888e_4908d18d_orig)
+![The greeting page](https://img-fotki.yandex.ru/get/16156/289488726.0/0_21888e_4908d18d_orig)
 
-## Starting with
+## First steps to start
 
 ### Minimal requirements
 
-Installed platform [Node.js 0.10](http://nodejs.org).
+An installed platform [Node.js 0.10](http://nodejs.org).
 
-### Local copy and environment setting
+### A local copy and environment setting
 
-For quick and easy creation of BEM project use [template repository](https://github.com/bem/project-stub). It contains the minimal configuration files and folders.
+A [template repository](https://github.com/bem/project-stub) is the quickest and easiest way to start your BEM project. It contains the minimal configuration files and folders.
 
 1.  Make local copy of `project-stub`.
 
-    **NB** This document describes an installation procedure for revision [13ae0e18ef8f48bc552b4944f7e5971c5b5f4768](https://github.com/bem/project-stub/ commit/13ae0e18ef8f48bc552b4944f7e5971c5b5f4768). The installation procedure of next versions may differ.
+    **NB** The document describes an installation procedure based on the revision [13ae0e18ef8f48bc552b4944f7e5971c5b5f4768](https://github.com/bem/project-stub/ commit/13ae0e18ef8f48bc552b4944f7e5971c5b5f4768). The installation procedure of next versions may differ.
 
     ```bash
     git clone https://github.com/bem/project-stub.git start-project
@@ -29,7 +29,7 @@ For quick and easy creation of BEM project use [template repository](https://git
     npm install
     ```
 
-2.  Run the server with help of [ENB](https://ru.bem.info/tools/bem/enb-bem-techs/)(for the moment this article is available only in russian language).
+2.  Run a server with help of [ENB](https://ru.bem.info/tools/bem/enb-bem-techs/)(this article is available only in russian language).
 
     ```bash
     node_modules/.bin/npm start
@@ -37,38 +37,41 @@ For quick and easy creation of BEM project use [template repository](https://git
 
 3.  Check the result on [http://localhost:8080/desktop.bundles/index/index.html](http://localhost:8080/desktop.bundles/index/index.html).
 
-    Page with library blocks implementations should open:
+    A page with library blocks examples should open:
 
-    ![main page](https://img-fotki.yandex.ru/get/15493/289488726.0/0_218be7_cbbd5b69_orig)
+    ![A main page](https://img-fotki.yandex.ru/get/15493/289488726.0/0_218be7_cbbd5b69_orig)
 
-## Step-by-step instruction for project creation
+## Step-by-step instruction for the project creation
 
-1.  [Create page](#page_creation)  
-  1.1 [Describe page in BEMJSON file](#BEMJSON_declaration)
-2.  [Create block](#block_creation)
-3.  [Implement block hello](#block_hello_modification)  
-  3.1 [In JavaScript technology](#JS_modification)  
-  3.2 [In BEMHTML technology](#BEMHTML_modification)  
-  3.3 [In CSS technology](#CSS_modification)
+1.  [Create a page](#page_creation)
+  1.1 [Describe the page in BEMJSON file](#BEMJSON_declaration)
+2.  [Create a block](#block_creation)
+3.  [Implement hello block](#block_hello_modification)
+  3.1 [Use JavaScript technology](#JS_modification)
+  3.2 [Use BEMHTML technology](#BEMHTML_modification)
+  3.3 [Use CSS technology](#CSS_modification)
 
-When all steps have been completed you can watch the [result](#result). 
+When all steps have been completed you can watch the [result](#result).
 
 <a name="page_creation"></a>
 
-### 1.  Create page
+### 1.  Create a page
 
-Pages source code are stored in the `start-project/desktop.bundles` directory. The main page `index.html` contains blocks implementations of the [bem-components](https://en.bem.info/libs/bem-components/) library.
+Pages source code are stored in the `start-project/desktop.bundles` directory. The main page `index.html` contains blocks implementations of [bem-components](https://en.bem.info/libs/bem-components/) library.
 
-Create new page to start your own project. Paste `hello` directory in the `desktop.bundles` and add `hello.bemjson.js` file into it.
+Create a new page to start your own project.
+
+1. Create `hello` directory in the `desktop.bundles`.
+2. Add `hello.bemjson.js` file into `hello` directory.
 
 <a name="BEMJSON_declaration"></a>
 
-#### 1.1 Describe page in BEMJSON file
+#### 1.1 Describe the page in BEMJSON file
 
 A [BEMJSON file](https://en.bem.info/technology/bemjson/) describes a page structure in BEM terms: blocks, elements and modifiers.
 
-1. Add in your project description of block `hello` in the `desktop.bundles/hello/hello.bemjson.js` file.  
-  **hello** block is an entity, that contains all necessary elements for the project.
+1. Add a description of `hello` block  in the `desktop.bundles/hello/hello.bemjson.js` file.
+  **hello** block is an entity that will contain all necessary elements for the project.
 
     ```js
     {
@@ -87,8 +90,8 @@ A [BEMJSON file](https://en.bem.info/technology/bemjson/) describes a page struc
     }
     ```
 
-2. Place `greeting` element with text of user greeting (**content** field) in `hello` block.  
-  **greeting** element is a sub-entity, that contains greeting phrase and ready-made blocks implementations.
+2. Place `greeting` element with the greeting text (**content** field) into `hello` block.
+  **greeting** element is a sub-entity, that contains the greeting phrase and ready-made blocks implementations of `bem-components` library.
 
     ```js
     content: [
@@ -98,13 +101,13 @@ A [BEMJSON file](https://en.bem.info/technology/bemjson/) describes a page struc
                     {
                         elem: 'greeting',
                         content: 'Hello, %user%!'
-                    }
+                `bem-components` library}
                 ]
             }
         ]
     ```
 
-3. To create an input field and a button take provided by the `bem-components` library `input` and `button` blocks and add them to the `greeting` element.
+3. To create an input field and a button use `input` and `button` blocks from `bem-components` library. Add these blocks to `greeting` element.
 
     ```js
     ({
@@ -140,36 +143,36 @@ A [BEMJSON file](https://en.bem.info/technology/bemjson/) describes a page struc
     })
     ```
 
-To consider that page shows all necessary objects, open [http://localhost:8080/desktop.bundles/hello/hello.html](http://localhost:8080/desktop.bundles/hello/hello.html).
+To consider that the page shows all necessary objects, open [http://localhost:8080/desktop.bundles/hello/hello.html](http://localhost:8080/desktop.bundles/hello/hello.html).
 
-You may provide some changes into existing blocks on your [redefinition level](https://en.bem.info/tools/bem/bem-tools/levels/).
+You can provide additional changes to existing blocks on your [redefinition level](https://en.bem.info/tools/bem/bem-tools/levels/).
 
 <a name="block_creation"></a>
 
-### 2. Create block
+### 2. Create a block
 
-To provide appropriate work of all object on the page, it is necessary to specify additional functionality of `hello` block on your redefinition level.
+To provide correct work to all object on the page, it is necessary to specify additional functionality of `hello` block on your redefinition level.
 
-1.  Manually create directory of `hello` block on the `desktop.blocks` level.
-2.  Place required for the project [block's implementation technology files](https://en.bem.info/method/filesystem/) (`CSS`, `JS`, `BEMHTML`) into **hello** directory.
-    Block directory name and its nested files should coincide with block name specified in BEMJSON file.
+1.  Create a directory of `hello` block on `desktop.blocks` level.
+2.  Create [the implementation technology files](https://bem.info/method/filesystem/) (`CSS`, `JS`, `BEMHTML`) required to the block in **hello** directory.
+    A block directory name and its nested files must coincide with block name specified in a BEMJSON file.
 
-   *  `hello.js` – describes dynamic page functionality;  
-   *  `hello.bemhtml` – template for generation of block HTML representation;  
-   *  `hello.css` – changes objects design on the page.
+   *  `hello.js` – describes dynamic page functionality
+   *  `hello.bemhtml` – a template for generation of the block HTML representation
+   *  `hello.css` – changes a custom design on the page
 
 <a name="block_hello_modification"></a>
 
-### 3. Implement hello block
+### 3. Implement `hello` block
 
-For block representation in BEM terms it is necessary to describe it in the implementation technology files.
+To implement the block in BEM terms, use the created technology files.
 
 <a name="JS_modification"></a>
 
-#### 3.1 Implement block in JavaScript technology
+#### 3.1 Implement `hello` block in JavaScript technology
 
-1. Describe a block reaction depending on user action with help of `onSetMod` property in the `desktop.blocks/hello/hello.js` file. After button clicking greeting text will be replaced with the user name entered in the input field.  
-JavaScript code is written using the [i-bem.js](https://ru.bem.info/technology/i-bem/) (for the moment this article is available only in russian language) declarative JavaScript framework.
+1. Describe a block reaction depending on a user action using `onSetMod` property in the `desktop.blocks/hello/hello.js` file. A click on the button adds the user name from the input field into the greeting phrase.
+JavaScript code is written using [i-bem.js](https://ru.bem.info/technology/i-bem/) (this article is available only in russian language) declarative JavaScript framework.
 
     ```js
     onSetMod: {
@@ -187,20 +190,20 @@ JavaScript code is written using the [i-bem.js](https://ru.bem.info/technology/i
 
     ```
 
-2. To represent current JavaScript code, use modular system [YModules](https://en.bem.info/tools/bem/modules/).
+2. To represent current JavaScript code, use [YModules](https://bem.info/tools/bem/modules/) modular system .
 
     ```js
     modules.define(
-        'hello', // block name
+        'hello', // a block name
         ['i-bem__dom'], // dependence connection
-        function(provide, BEMDOM) { // function to which names of the used modules are transferred
-            provide(BEMDOM.decl('hello', { // block declaration
-                onSetMod: { // constructor for reaction description on event
+        function(provide, BEMDOM) { // a function that received names of the used modules
+            provide(BEMDOM.decl('hello', { // a block declaration
+                onSetMod: { // a constructor that describes reaction on an event
                     'js': {
                         'inited': function() {
                             this._input = this.findBlockInside('input');
 
-                            this.bindTo('submit', function(e) { // event on which there will be a reaction
+                            this.bindTo('submit', function(e) { // the event that causes reaction
                                 e.preventDefault(); // prevention of event work by default (form data sending to the server with page reload)
                                 this.elem('greeting').text('Hello, ' + this._input.getVal() + '!');
                             });
@@ -213,11 +216,11 @@ JavaScript code is written using the [i-bem.js](https://ru.bem.info/technology/i
 
 <a name="BEMHTML_modification"></a>
 
-#### 3.2 Implement block in BEMHTML technology
+#### 3.2 Implement `hello` block in BEMHTML technology
 
-[BEMHTML](https://en.bem.info/technology/bemhtml/current/rationale/) – technology that processes BEMJSON declaration to create HTML layout of a web page.
+[BEMHTML](https://bem.info/technology/bemhtml/current/rationale/) – technology that processes BEMJSON declaration to create HTML layout of a web page.
 
-1. Write [BEMHTML tempate](https://en.bem.info/technology/bemhtml/current/reference/) and specify that `hello` block has JavaScript implementation.
+1. Write [BEMHTML tempate](https://bem.info/technology/bemhtml/current/reference/) and specify that `hello` block has JavaScript implementation.
 2. Implement `hello` block with form, adding `tag` mode.
 
 ```js
@@ -229,7 +232,7 @@ block('hello')(
 
 <a name="CSS_modification"></a>
 
-#### 3.3 Implement block in CSS technology
+#### 3.3 Implement `hello` block in CSS technology
 
 Create your own CSS rules for `hello` block. For example:
 
@@ -265,10 +268,10 @@ To change the position of the block on the page and leave it in its original for
 
 <a name="result"></a>
 
-## Result
+## The final result
 
-To see the result of this project, please refresh the page:
+To see the result of the project, please refresh the page:
 
     http://localhost:8080/desktop.bundles/hello/hello.html
 
-Since the project consisted only of one page, in full build was no need. How to write a more complex project is described in [Starting your own project](https://en.bem.info/tutorials/start-with-project-stub/) article.
+Since the project consists only of one page, in full build was no need. Description of a more complex project is in [Starting your own project](https://bem.info/tutorials/start-with-project-stub/) article.
